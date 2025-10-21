@@ -1,4 +1,4 @@
-# 📊 Project Gantt Chart — LIMO AprilTag Autonomous Navigation
+#Project Gantt Chart — LIMO AprilTag Autonomous Navigation
 
 ```mermaid
 gantt
