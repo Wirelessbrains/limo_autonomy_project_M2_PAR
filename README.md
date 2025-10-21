@@ -42,4 +42,37 @@ All detailed project documentation has been moved to the `/docs` folder.
 
 The repository is organized as follows:
 
+├─ README.md             # This file
+├─ docs/                 # All project documentation
+│  ├─ specifications.md  # Project objectives and requirements (formerly Cahier de Charges)
+│  ├─ gantt.png          # Project timeline and task allocation
+│  ├─ architecture.md    # System methodology (Teach, Replay, Resume) and ROS node details
+│  ├─ experiments.md     # Validation, simulation results, and demonstration GIFs
+│  ├─ references.bib     # BibTeX file for all scientific references
+│  └─ system_architecture.png # Screenshot of the ROS 2 node graph (rqt_graph)
+│
+├─ src/                  # ROS 2 Python packages (the "brain")
+│  ├─ mapping/           # Stage 1: Teach-run node and waypoint saving logic
+│  ├─ route_follow/      # Stage 2: Autonomous route following node (Nav2 client)
+│  └─ relocalization/    # Stage 3: Localization state machine (Search, Localize, Resume)
+│
+├─ config/               # YAML parameter files
+│  ├─ nav2_params.yaml   # Parameters for the Nav2 stack
+│  └─ apriltag.yaml      # Configs for the apriltag_ros node (tag size, family)
+│
+├─ launch/               # ROS 2 launch files
+│  ├─ sim_teach.launch.py   # Launches Gazebo + mapping node
+│  └─ sim_nav.launch.py     # Launches Gazebo + relocalization node
+│
+├─ simulation/           # Simulation-specific assets
+│  ├─ worlds/            # Gazebo world files (.world)
+│  └─ rviz/              # RViz configuration files (.rviz)
+│
+├─ scripts/              # Utility scripts (not ROS nodes)
+│  └─ waypoint_parser.py # Helper script to read/write waypoint files
+│
+└─ .github/              # GitHub-specific files
+   └─ ISSUE_TEMPLATE/
+      └─ task.md         # Template for creating new development tasks
+
 
