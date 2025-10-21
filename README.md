@@ -17,14 +17,14 @@ This project presents an autonomous navigation system for the AgileX LIMO robot,
 
 ## Authors (The Team)
 
-* **Person 1:** [Your Name] - (Simulation & ROS Architect) - [your.email@example.com]
+* **Person 1:** [MARTINS DO LAGO REIS João Pedro] - (Simulation & ROS Architect) - [joao_pedro.martins_do_lago_reis@etu.uca.fr]
 * **Person 2:** [Teammate's Name] - (Navigation Logic & State Machine Engineer) - [teammate.email@example.com]
 
 ---
 
 ---
 
-## 📖 Project Documentation
+## Project Documentation
 
 All detailed project documentation has been moved to the `/docs` folder.
 
@@ -38,7 +38,7 @@ All detailed project documentation has been moved to the `/docs` folder.
 
 ---
 
-## 🛠 Code Structure
+## Code Structure
 
 The repository is organized as follows:
 
