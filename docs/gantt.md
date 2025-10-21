@@ -1,3 +1,7 @@
+# 📊 Project Gantt Chart — LIMO AprilTag Autonomous Navigation
+
+```mermaid
+gantt
   title LIMO Project - AprilTag Autonomous Navigation
   dateFormat  YYYY-MM-DD
   axisFormat  %d/%m
@@ -29,4 +33,3 @@
   Report + final documentation            :d3, after d2, 10d
   Video presentation + delivery           :d4, 2026-02-15, 5d
   Deliverable M4 (Final presentation)     :milestone, after d4, 0d
-EOF
