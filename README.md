@@ -15,12 +15,13 @@ This project presents an autonomous navigation system for the AgileX LIMO robot,
 
 ---
 
-## Authors
+### 👥 Authors
 
-* **Person 1:** [MARTINS DO LAGO REIS João Pedro] - (Simulation & ROS Architect) - [joao_pedro.martins_do_lago_reis@etu.uca.fr]
-* **Person 2:** [DA SILVA RAMOS Yann Kelvem] - (Navigation Logic & State Machine Engineer) - [yann_kelvem.da_silva_ramos@etu.uca.fr]
+| Name | Role | Contact |
+|------|------|----------|
+| **MARTINS DO LAGO REIS João Pedro** | Simulation & ROS Architect | joao_pedro.martins_do_lago_reis@etu.uca.fr |
+| **DA SILVA RAMOS Yann Kelvem** | Navigation Logic & State Machine Engineer | yann_kelvem.da_silva_ramos@etu.uca.fr |
 
----
 
 ---
 
@@ -38,41 +39,49 @@ All detailed project documentation has been moved to the `/docs` folder.
 
 ---
 
+
+
 ## Code Structure
 
-The repository is organized as follows:
-
-├─ README.md             # This file
-├─ docs/                 # All project documentation
-│  ├─ specifications.md  # Project objectives and requirements (formerly Cahier de Charges)
-│  ├─ gantt.png          # Project timeline and task allocation
-│  ├─ architecture.md    # System methodology (Teach, Replay, Resume) and ROS node details
-│  ├─ experiments.md     # Validation, simulation results, and demonstration GIFs
-│  ├─ references.bib     # BibTeX file for all scientific references
-│  └─ system_architecture.png # Screenshot of the ROS 2 node graph (rqt_graph)
-│
-├─ src/                  # ROS 2 Python packages (the "brain")
-│  ├─ mapping/           # Stage 1: Teach-run node and waypoint saving logic
-│  ├─ route_follow/      # Stage 2: Autonomous route following node (Nav2 client)
-│  └─ relocalization/    # Stage 3: Localization state machine (Search, Localize, Resume)
-│
-├─ config/               # YAML parameter files
-│  ├─ nav2_params.yaml   # Parameters for the Nav2 stack
-│  └─ apriltag.yaml      # Configs for the apriltag_ros node (tag size, family)
-│
-├─ launch/               # ROS 2 launch files
-│  ├─ sim_teach.launch.py   # Launches Gazebo + mapping node
-│  └─ sim_nav.launch.py     # Launches Gazebo + relocalization node
-│
-├─ simulation/           # Simulation-specific assets
-│  ├─ worlds/            # Gazebo world files (.world)
-│  └─ rviz/              # RViz configuration files (.rviz)
-│
-├─ scripts/              # Utility scripts (not ROS nodes)
-│  └─ waypoint_parser.py # Helper script to read/write waypoint files
-│
-└─ .github/              # GitHub-specific files
-   └─ ISSUE_TEMPLATE/
-      └─ task.md         # Template for creating new development tasks
+```bash
+limo_ws/
+├─ README.md
+├─ LICENSE
+├─ .gitignore
+├─ docs/
+│  ├─ cahier_des_charges.md
+│  ├─ gantt.png
+│  ├─ architecture.md
+│  ├─ experiments.md
+│  ├─ references.bib
+│  └─ system_architecture.png
+├─ .github/
+│  ├─ ISSUE_TEMPLATE/
+│  │  └─ task.md
+│  ├─ PULL_REQUEST_TEMPLATE.md
+│  └─ CODEOWNERS
+└─ src/
+   ├─ limo_mapping/
+   │  ├─ package.xml
+   │  ├─ CMakeLists.txt
+   │  ├─ launch/mapping.launch.py
+   │  ├─ config/apriltag.yaml
+   │  └─ src/mapping_node.py
+   ├─ limo_route_follow/
+   │  ├─ package.xml
+   │  ├─ CMakeLists.txt
+   │  ├─ launch/route_follow.launch.py
+   │  ├─ config/controller.yaml
+   │  └─ src/route_follow_node.py
+   ├─ limo_relocalization/
+   │  ├─ package.xml
+   │  ├─ CMakeLists.txt
+   │  ├─ launch/relocalization.launch.py
+   │  └─ src/relocalization_node.py
+   └─ limo_simulation/
+      ├─ package.xml
+      ├─ CMakeLists.txt
+      ├─ rviz/mapping_view.rviz
+      └─ worlds/track.world
 
 
