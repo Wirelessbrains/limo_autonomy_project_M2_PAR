@@ -36,7 +36,7 @@ All detailed project documentation has been moved to the `/docs` folder.
 | :--- | :--- |
 | **[Project Specifications](./docs/project_specifications.md)** | The project specifications: objectives and functional/non-functional requirements. |
 | **[System Architecture](./docs/architecture.md)** | The core methodology (Teach, Replay, Resume) and software architecture (ROS Nodes). |
-| **[Project Timeline](./docs/gantt.png)** | The gantt chart detailing the project plan and task division. |
+| **[Project Timeline](./docs/gantt.md)** | The gantt chart detailing the project plan and task division. |
 | **[Experiments & Results](./docs/experiments.md)** | Demonstration GIFs, videos, and validation of the system. |
 | **[References](./docs/references.bib)** | All scientific and technical references in BibTeX format. |
 
