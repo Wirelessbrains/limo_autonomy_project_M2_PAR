@@ -60,7 +60,7 @@ limo_ws/
 ├─ LICENSE
 ├─ .gitignore
 ├─ docs/
-│  ├─ cahier_des_charges.md
+│  ├─ project_specification.md
 │  ├─ gantt.png
 │  ├─ architecture.md
 │  ├─ experiments.md
