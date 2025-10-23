@@ -51,3 +51,12 @@ colcon build --symlink-install
 
 ## So if you have no erros you enviroment is ready.
 
+
+## Exemple test
+
+```bash
+ros2 launch limo_description gazebo_models_diff.launch.py
+```
+```bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
