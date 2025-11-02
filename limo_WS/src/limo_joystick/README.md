@@ -8,11 +8,9 @@ It includes two different modes of operation, each launched through separate lau
 ### **⚠️ IMPORTANT PREREQUISITE**
 This package relies on the **`limo_ros2`** (or `limo_description`) package being installed and configured in your workspace for the simulation models to be loaded correctly. Please refer to the specific configuration guide for your environment:
 
-**TUTORIAL PATH:** [LIMO ROS2 HUMBLE CONFIGURATION] (tutorial/cofig_Limo_ROS2_Humble_eviroment.md)
+**TUTORIAL PATH:** [LIMO ROS2 HUMBLE CONFIGURATION](https://github.com/Wirelessbrains/limo_autonomy_project_M2_PAR/blob/versionyk/tutorials/cofig_Limo_ROS2_Humble_eviroment.md)
 
-**Or copy and pas teh folder  [Limo_ros2] (tutorial/cofig_Limo_ROS2_Humble_eviroment.md) and build in your workspace/src
-
-
+---
 ## 📁 Package Overview
 
 **Package name:** `limo_joystick`  
