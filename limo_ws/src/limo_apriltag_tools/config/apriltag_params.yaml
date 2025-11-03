@@ -1,0 +1,19 @@
+# ~/limo_autonomy_project_M2_PAR/limo_ws/src/limo_apriltag_tools/config/apriltag_params.yaml
+apriltag:
+  ros__parameters:
+    # Sincronização — com FPS baixo, uma fila menor ajuda a casar carimbos próximos
+    sync_approximate: true
+    sync_queue_size: 5
+
+    use_image_transport: false
+
+    camera_frame: "camera"
+    tag_frame_prefix: "tag_"
+
+    tag_family: "tag36h11"
+    tag_size: 0.150
+    quad_decimate: 2.0
+    quad_sigma: 0.0
+    nthreads: 2
+    refine_edges: 1
+

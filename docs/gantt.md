@@ -2,6 +2,7 @@
 
 ```mermaid
 gantt
+<<<<<<< HEAD
     title LIMO Project - AprilTag Autonomous Navigation
     dateFormat YYYY-MM-DD
     axisFormat %d/%m
@@ -14,6 +15,20 @@ gantt
     Teach Run Manual Teleoperation :a3, after a2, 8d
     Dataset Recording and Validation :a4, after a3, 5d
     Deliverable M1 Docs and Demo :milestone, m1d, after a4, 0d
+=======
+  title LIMO Project - AprilTag Autonomous Navigation
+  dateFormat  YYYY-MM-DD
+  axisFormat  %d/%m
+  tickInterval 1week
+  todayMarker on
+
+  section M1 – Mapping (Teach)
+  Environment setup + docs       :a1, 2025-10-21, 7d
+  Teach-run (manual teleoperation) :a2, after a1, 5d
+  AprilTag detection & calibration :a3, after a2, 10d
+  Dataset recording & validation   :a4, after a3, 5d
+  Deliverable M1 (docs + demo)     :milestone, after a4, 0d
+>>>>>>> 0edb596a70d0c9b1b54300f1c5ee8aa2491668b3
 
     section M2 - Route Following (Replay)
     Waypoint Generation and Smoothing :b1, 2025-11-20, 10d

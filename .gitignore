@@ -1,0 +1,18 @@
+# Ignora pastas de build e log do ROS 2
+build/
+install/
+log/
+
+# Ignora cache do Python
+*.pyc
+__pycache__/
+
+# Ignora arquivos de IDE (ex: VSCode)
+.vscode/
+
+# Ignora arquivos de sistema
+.DS_Store
+Thumbs.db
+# Ignora dependências de terceiros compiladas do código-fonte
+limo_ws/src/apriltag_msgs/
+limo_ws/src/apriltag_ros/
