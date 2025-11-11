@@ -22,8 +22,8 @@ This project presents an autonomous navigation system for the AgileX LIMO robot,
 
 | Name | Role | Contact |
 |------|------|----------|
-| **MARTINS DO LAGO REIS João Pedro** | Simulation & ROS Architect | joao_pedro.martins_do_lago_reis@etu.uca.fr |
-| **DA SILVA RAMOS Yann Kelvem** | Navigation Logic & State Machine Engineer | yann_kelvem.da_silva_ramos@etu.uca.fr |
+| **MARTINS DO LAGO REIS João Pedro** | Autonomous Navigation and Visual Relocalization | joao_pedro.martins_do_lago_reis@etu.uca.fr |
+| **DA SILVA RAMOS Yann Kelvem** |  Simulation & ROS Architect | yann_kelvem.da_silva_ramos@etu.uca.fr |
 
 
 ---
