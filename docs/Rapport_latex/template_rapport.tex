@@ -14,15 +14,18 @@
 %* Classe du document
 %*-----------------------------------------------------------------------------*
 
-\documentclass[a4paper,11pt]{report}    % A4, police taille 11, report pour avoir les chapitres
+\documentclass[a4paper,11pt]{article}    % A4, police taille 11, article pour les rapports courts
 
 %*-----------------------------------------------------------------------------*
 %* Langue française pour le document
 %*-----------------------------------------------------------------------------*
 
 \usepackage{latexsym}       % Police latex de base
-\usepackage[french]{babel}  % Dictionnaire français (indentation, caractères spéciaux, tirets...)
-\usepackage[utf8]{inputenc} % Encodage d'entrée pour les caractères accentués
+\usepackage[english]{babel} % English hyphenation and document strings
+\usepackage{indentfirst}    % Força a indentação do primeiro parágrafo
+\usepackage{mathpazo}       % Fonte Palatino (Mais elegante e encorpada que o padrão)
+\usepackage[scaled]{helvet} % Fonte Helvetica para Sans-Serif (combina bem com Palatino)
+\linespread{1.05}           % Ajuste de linha ideal para Palatino
 \usepackage[T1]{fontenc}    % Affichage correct des caractères accentués notamment
 
 %*-----------------------------------------------------------------------------*
@@ -36,17 +39,24 @@
 \setlength{\parskip}{1em}   % Définition de l'espace entre les paragraphes
 \setlength{\parindent}{4em} % Définition de la longueur du "tab" = indentation
 \usepackage{fancyhdr}       % Permet en-tête et pied de page
-\pagestyle{fancyplain}      % Pour avoir le même style sur les pages fancy et sur celles plains comme la toc
-\renewcommand\plainheadrulewidth{.4pt}  % Le trait noir sous les logos sur les pages plain
-\fancyhead[L]{\includegraphics[scale=0.1]{Logo_Univ_Lyon_1.png}}    % Logo gauche
-\fancyhead[R]{\includegraphics[scale=0.15]{Logo_Polytech_Lyon.png}} % Logo droit
-% Redéfinir le style "empty" utilisé par le documentclass "report" pour le titre, résumé et chapitres
-\fancypagestyle{empty}
-{
-    \fancyhf{}
-    \fancyhead[L]{\includegraphics[scale=0.1]{Logo_Univ_Lyon_1.png}}    % Logo gauche
-    \fancyhead[R]{\includegraphics[scale=0.15]{Logo_Polytech_Lyon.png}} % Logo droit
-}
+\pagestyle{fancy}           % Define o estilo fancy para o documento
+\fancyhf{}                  % Limpa todos os campos de cabeçalho e rodapé
+
+% --- Configuração Profissional de Cabeçalho ---
+% Redefinição para tirar o número da seção do cabeçalho
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+
+% Esquerda: Nome da Seção atual (sem o número e sem forçar maiúsculas)
+\fancyhead[L]{\small \nouppercase{\leftmark}}
+
+% Direita: Título do Projeto (pode ajustar o texto conforme necessário)
+\fancyhead[R]{\small AprilTag-based Trajectory Tracking}
+
+% Rodapé: Número da página ao centro
+\fancyfoot[C]{\thepage}
+
+% Linha horizontal separadora (0.4pt é o padrão elegante)
+\renewcommand{\headrulewidth}{0.4pt}
 
 %*-----------------------------------------------------------------------------*
 %* Liens dans le document, méta-datas et références bibliographiques
@@ -58,17 +68,82 @@
 \usepackage{caption}    % Légendes dans les environnements "figure" et "float"
 \usepackage[list=true]{subcaption} % Légendes pour les "sous-figures" et "sous-float"
                                    % et affichage des "sous-..." dans la liste des figures
-\def\thechapter{\Alph{chapter}}    % Définition des chapitres avec une lettre
+%\def\thechapter{\Alph{chapter}}    % Définition des chapitres avec une lettre
 \setcounter{tocdepth}{3}           % Profondeur de numérotation de la toc  (chap > sec > subsec > subsubsec)
 \setcounter{secnumdepth}{3}        % Profondeur de numérotation des titres (chap > sec > subsec > subsubsec)
 \usepackage{chngcntr}              % Permet de changer les numérotations d'objets
-\usepackage[titles]{tocloft}       % Gestion très précise des différentes listes
+\usepackage{tocloft}               % Gestion très précise des différentes listes (SEM a opção 'titles' para permitir espaçamento manual)
+\usepackage{titlesec}              % Gestão avançada de títulos e seções
+
+% --- Ajustes do Sumário (Table of Contents) ---
+\renewcommand{\contentsname}{Table of Contents} 
+
+% Configuração manual do título do Sumário (já que removemos [titles])
+% TRUQUE: Injetamos \vspace*{4cm} dentro da fonte para FORÇAR o espaço no topo da página
+\renewcommand{\cfttoctitlefont}{\vspace*{4cm}\normalfont\huge\bfseries} 
+\setlength{\cftbeforetoctitleskip}{0pt} 
+\setlength{\cftaftertoctitleskip}{1.0cm}
+
+% --- Estilização das Entradas ---
+\renewcommand{\cftsecfont}{\bfseries}       % Seções em Negrito (Título)
+\renewcommand{\cftsecpagefont}{\bfseries}   % Seções em Negrito (Número da Página)
+
+% --- Espaçamento Vertical ---
+\setlength{\cftbeforesecskip}{1.2em}       % Espaço generoso antes de cada Seção
+\setlength{\cftbeforesubsecskip}{0.3em}    % Espaço sutil antes de Subseções
+\setlength{\cftbeforesubsubsecskip}{0.0em} % Sem espaço extra entre Sub-subseções (lista compacta)
+
+% Garante pontilhado também nas seções
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+% --- Formatação de Títulos (Estilo Tese/Doutorado) ---
+
+% Configuração da SEÇÃO (Como se fosse Capítulo)
+\titleformat{\section}
+  {\normalfont\huge\bfseries} 
+  {\thesection}               
+  {1em}                       
+  {}                          
+
+% Zeramos o espaçamento automático do titlesec para controlar manualmente na redefinição abaixo
+\titlespacing*{\section}{0pt}{0pt}{1cm}
+
+% --- REDEFINIÇÃO PODEROSA DA SEÇÃO ---
+% Força nova página e espaço vertical de 4cm antes de CADA seção automaticamente
+\let\oldsection\section
+\renewcommand{\section}{%
+  \newpage                  % Começa página nova
+  \vspace*{0.2cm}             % Espaço rígido no topo
+  \oldsection}              % Chama a seção original
+
+% --- Configuração da SUBSEÇÃO ---
+\titleformat{\subsection}
+  {\normalfont\Large\bfseries}  % Fonte Grande e Negrito
+  {\thesubsection}              % Número
+  {1em}                         % Espaço numero-texto
+  {}
+
+% Espaço generoso antes (1.5cm) para separar do texto anterior
+% Espaço médio depois (0.6cm) para o texto não grudar
+\titlespacing*{\subsection}{0pt}{1.0cm}{0.2cm}
+
+% --- Configuração da SUB-SUBSEÇÃO ---
+\titleformat{\subsubsection}
+  {\normalfont\large\bfseries}  % Fonte levemente maior que o texto normal
+  {\thesubsubsection}
+  {1em}
+  {}
+
+% Espaço médio antes (1.0cm)
+% Espaço curto depois (0.4cm)
+\titlespacing*{\subsubsection}{0pt}{0.5cm}{0.2cm}
+% ----------------------------------------------
 
 \hypersetup % Attribution des méta-datas pdf pour reconnaissance automatique Zotero entre autres
 {
-pdftitle={Titre},
-pdfsubject={Sujet},
-pdfauthor={Auteur},
+pdftitle={Title},
+pdfsubject={Subject},
+pdfauthor={Author},
 pdfkeywords={keyword1} {keyword2} {keyword3}
 }
 
@@ -86,15 +161,15 @@ pdfkeywords={keyword1} {keyword2} {keyword3}
 \usepackage{amsmath,amsfonts,amssymb}   % Écrire des maths
 \usepackage{cancel}                     % Barrer des maths
 \usepackage{mathtools}                  % Gestion des matrices et de maths complexes
-\usepackage{morewrites}                 % Résout un problème entre les listes équation et codes
-\usepackage[color={[RGB]{255,191,191}}, text=Confidentiel, scale=1]{draftwatermark} % Ajout filigrane
+%\usepackage{morewrites}                 % Résout un problème entre les listes équation et codes
+%\usepackage[color={[RGB]{255,191,191}}, text=Confidentiel, scale=1]{draftwatermark} % Ajout filigrane
 
-\usepackage{lmodern}
-\usepackage[Lenny]{fncychap}
+%\usepackage{lmodern}
+%\usepackage[Lenny]{fncychap}
 
-\ChNameUpperCase
-\ChNumVar{\fontsize{40}{42}\usefont{OT1}{ptm}{m}{n}\selectfont}
-\ChTitleVar{\Huge \bfseries}
+%\ChNameUpperCase
+%\ChNumVar{\fontsize{40}{42}\usefont{OT1}{ptm}{m}{n}\selectfont}
+%\ChTitleVar{\Huge \bfseries}
 
 \usepackage{pifont}
 \usepackage{enumitem}       % Gestion des énumérations
@@ -161,17 +236,17 @@ pdfkeywords={keyword1} {keyword2} {keyword3}
 % Création de groupes de nomenclature : ATTENTION -> Uniquement des caractères uniques en identifiant
 \renewcommand\nomgroup[1]{%
   \item[\bfseries
-  \ifstrequal{#1}{A}{Groupe 1}{%
-  \ifstrequal{#1}{B}{Groupe 2}{%
-  \ifstrequal{#1}{C}{Groupe 3}{%
+  \ifstrequal{#1}{A}{Group 1}{%
+  \ifstrequal{#1}{B}{Group 2}{%
+  \ifstrequal{#1}{C}{Group 3}{%
   }}}%
 ]} % Attention aux accolades lors de la création de groupes
 
 \AtBeginDocument{   % Nomenclature à générer
-\nomenclature[A]{$c_{air}$}{Célérité du son dans l'air à \SI{15}{\celsius} \nomunit{\SI{340.29}{\meter\per\second}}}
-\nomenclature[B]{$T_N$}{Période propre de l'élément considéré}
-\nomenclature[B]{\(E\)}{{Module d'Young}}
-\nomenclature[C]{$\dot{\epsilon}$}{Vitesse de déformation \nomunit{\si{\per\second}}}
+\nomenclature[A]{$c_{air}$}{Speed of sound in air at \SI{15}{\celsius} \nomunit{\SI{340.29}{\meter\per\second}}}
+\nomenclature[B]{$T_N$}{Natural period of the considered element}
+\nomenclature[B]{\(E\)}{{Young's modulus}}
+\nomenclature[C]{$\dot{\epsilon}$}{Strain rate \nomunit{\si{\per\second}}}
 }
 
 %*-----------------------------------------------------------------------------*
@@ -185,9 +260,9 @@ pdfkeywords={keyword1} {keyword2} {keyword3}
 \setcounter{lofdepth}{2}            % Afficher jusqu'aux sous-figures dans la liste des figures
 \cftsetindents{figure}{0em}{3.5em}  % Réglage de l'espace entre le numéro et le nom de la figure dans la liste
 \setlength\cftbeforefigskip{5pt}    % Réglage de l'espacement entre les figures dans la liste
-\AtBeginDocument{\renewcommand{\listfigurename}{Liste des figures}} % Renommer la liste des figures
+\AtBeginDocument{\renewcommand{\listfigurename}{List of Figures}} % Rename list of figures
 % Ajout de la position de la liste des figures dans la toc
-\xpretocmd{\listoffigures}{\addcontentsline{toc}{chapter}{\listfigurename}}{}{}
+\xpretocmd{\listoffigures}{\addcontentsline{toc}{section}{\listfigurename}}{}{}
 
 %*-----------------------------------------------------------------------------*
 %* Gestion des tableaux
@@ -205,13 +280,13 @@ pdfkeywords={keyword1} {keyword2} {keyword3}
 \cftsetindents{table}{0em}{3.5em}   % Réglage de l'espace entre le numéro et le nom du tableau dans la liste
 \setlength\cftbeforetabskip{5pt}    % Réglage de l'espacement entre les figures dans la liste
 % Ajout de la position de la liste des tableaux dans la toc
-\xpretocmd{\listoftables}{\addcontentsline{toc}{chapter}{\listtablename}}{}{}
+\xpretocmd{\listoftables}{\addcontentsline{toc}{section}{\listtablename}}{}{}
 
 %*-----------------------------------------------------------------------------*
 %* Gestion des équations
 %*-----------------------------------------------------------------------------*
 
-\newcommand{\listequationsname}{Liste des équations}    % Renommer la liste des équations
+\newcommand{\listequationsname}{List of Equations}      % Rename list of equations
 \newlistof{myequations}{equ}{\listequationsname}
 \newcommand{\myequations}[1]{%
    \addcontentsline{equ}{myequations}{\protect\numberline{\theequation}#1}
@@ -230,61 +305,47 @@ pdfkeywords={keyword1} {keyword2} {keyword3}
 \endgroup}
 
 \makeatletter   % Espacement des équations plus important entre les chapitres
-\xpretocmd{\@chapter}{\addtocontents{equ}{\protect\addvspace{10\p@}}}{}{}{}%
+%\xpretocmd{\@chapter}{\addtocontents{equ}{\protect\addvspace{10\p@}}}{}{}{}%
 \makeatother
 % Ajout de la position de la liste des équation dans la toc
-\xpretocmd{\listofmyequations}{\addcontentsline{toc}{chapter}{\listequationsname}}{}{}
+\xpretocmd{\listofmyequations}{\addcontentsline{toc}{section}{\listequationsname}}{}{}
 
 %*-----------------------------------------------------------------------------*
 %* Gestion des codes
 %*-----------------------------------------------------------------------------*
 
-\usepackage[newfloat]{minted}       % Package permettant d'intégrer du code
-% Mode printer friendly
-\usemintedstyle{emacs}            	% Sélection du style de syntaxe
-\definecolor{bg}{HTML}{FFFFFF}      % Définition de la couleur d'arrière plan blanc
-% Mode pdf only
-%\usemintedstyle{monokai}            % Sélection du style de syntaxe
-%\definecolor{bg}{HTML}{282828}      % Définition de la couleur d'arrière plan monokai
-\counterwithin{listing}{section}    % Numérotation des codes à partir des sections
+\usepackage{listings}
+\usepackage{xcolor}
 
-% Configuration de newfloat pour que tout roule
-\newenvironment{code}{\captionsetup{type=listing}}{}
-\SetupFloatingEnvironment{listing}{%
-  name={Listing},
-  fileext=lol}
-\SetupFloatingEnvironment{listing}{listname=Liste des codes}    % Renommer la liste des codes
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
-% Gérer les codes de plus d'une page de document
-\newenvironment{longlisting}{\captionsetup{type=listing}}{} % longlisting pour les codes qui dépassent d'une page
-\vbadness=\maxdimen    % Casse les couilles ya pas de fix qui garde une couleur de background et une bonne liste
-                       % du-coup je décide de supprimer les warnings.
-% Source : https://tex.stackexchange.com/questions/50830/do-i-have-to-care-about-bad-boxes/50850#50850
-%        & https://tex.stackexchange.com/questions/138/what-are-underfull-hboxes-and-vboxes-and-how-can-i-get-rid-of-them
-
-\setminted          % Paramètre du code standard
-{
-breaklines,
-bgcolor=bg,
-frame=lines,
-framesep=2mm,
-baselinestretch=1.2,
-fontsize=\footnotesize,
-linenos=true,
-autogobble
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
 }
 
-\setmintedinline    % Paramètres du code inline
-{
-breaklines,
-bgcolor=bg,
-frame=lines,
-framesep=2mm,
-baselinestretch=1.2,
-fontsize=\footnotesize,
-linenos=true,
-autogobble
-}
+\lstset{style=mystyle}
+\renewcommand{\lstlistingname}{Listing}
+\renewcommand{\lstlistlistingname}{List of Listings}
+
+%\counterwithin{lstlisting}{section}    % Numérotation des codes à partir des sections
 
 %*-----------------------------------------------------------------------------*
 %* Index
@@ -293,14 +354,14 @@ autogobble
 \usepackage{imakeidx}   % Package pour créer l'index
 \makeindex              % Génération de l'index
 % Ajout de la position de l'index dans la toc
-\xpretocmd{\printindex}{\addcontentsline{toc}{chapter}{\indexname}}{}{}
+\xpretocmd{\printindex}{\addcontentsline{toc}{section}{\indexname}}{}{}
 
 %*-----------------------------------------------------------------------------*
 %* Bibliographie
 %*-----------------------------------------------------------------------------*
 
 % Importer un fichier biblatex, sans dépassement des marges, trié par ordre d'apparition
-\usepackage[block=ragged,sorting=none]{biblatex}
+\usepackage[backend=biber,style=ieee,citestyle=ieee,block=ragged,sorting=none]{biblatex}
 \usepackage{csquotes}           % Gestion des caractères " " lors des citations
 \addbibresource{biblio.bib}     % Importer le fichier de bibliographie
 \nocite{*}                      % Importer les éléments non cités quand même dans la bibliographie
@@ -311,8 +372,8 @@ autogobble
 
 \usepackage[toc,page,title,titletoc,header]{appendix}   % Packages indexes importants
 \usepackage{pdfpages}                                   % Intégration de pdf dans le document
-\renewcommand{\appendixtocname}{Table des annexes}      % Nom de la table des annexes dans la toc
-\renewcommand{\appendixpagename}{Annexes}               % Nom du titre de la page des annexes
+\renewcommand{\appendixtocname}{List of Appendices}     % Name of the appendices list in the toc
+\renewcommand{\appendixpagename}{Appendices}            % Title of the appendices page
 \usepackage{titletoc}	% Permet de générer une petite table des annexes
 
 %*-----------------------------------------------------------------------------*
@@ -320,8 +381,7 @@ autogobble
 %*-----------------------------------------------------------------------------*
 
 \usepackage[all,defaultlines=3]{nowidow}    % Macro pour la gestion des lignes seules en bout de page
-\usepackage{blindtext}                      % Génération de texte aléatoire pour les exemples
-% A utiliser avec https://ctan.mirror.garr.it/mirrors/ctan/macros/latex/contrib/mwe/mwe.pdf pour les images
+\usepackage{blindtext}                      
 
 %*=============================================================================*
 %* Fin du préambule LaTeX
@@ -340,66 +400,46 @@ autogobble
 \hypersetup{pageanchor=false}
 \begin{titlepage}
     \begin{center}
-        \vspace*{0.5cm}
+        \includegraphics[scale=0.16]{uca.png} \hfill \includegraphics[scale=0.02]{eupi_long.png}
+        \\[2cm]
 
-        \Huge
-        \textbf{Mémoire professionnel de Xe année}\\
-        \Large
-        présenté par\\
+        {\Large \textsc{Université Clermont Auvergne}}\\[0.5cm]
+        {\large École Universitaire de Physique et d'Ingénierie}
+        
+        \vfill
+
+        % Linha superior
+        \rule{\linewidth}{0.5mm} \\[0.4cm]
+        { \huge \bfseries AprilTag-based Trajectory Tracking \\[0.2cm] for the LIMOS Robot }\\[0.4cm]
+        % Linha inferior
+        \rule{\linewidth}{0.5mm} \\[1.5cm]
+
+        {\Large Second-year Master's project}\\[0.5cm]
+        {\large Automation, Robotics track: Artificial Perception and Robotics}
 
         \vfill
 
-        \Large
-        \textbf{Prénom NOM}\\
-        \emph{Filière}\\
-        Années YYYY-YYYY
+        \begin{minipage}{0.45\textwidth}
+            \begin{flushleft} \large
+                \emph{Authors:}\\
+                Joao Pedro \textsc{Martins do Lago Reis}\\
+                Yann Kelvem \textsc{Da Silva Ramos}
+            \end{flushleft}
+        \end{minipage}
+        \hfill
+        \begin{minipage}{0.45\textwidth}
+            \begin{flushright} \large
+                \emph{Supervisor:}\\
+                Dr. Sébastien \textsc{Lengagne} \\ 
+                \vspace{0.5cm}
+                \emph{Defense Date:} \\
+                March 02, 2026
+            \end{flushright}
+        \end{minipage}
 
         \vfill
 
-        \Huge
-        Énoncé du stage\\
-
-        \vfill
-
-        \begin{figure}[H]
-          \centering
-          \caption*{\Large Logo de l'entreprise et citation de la source}
-          \label{fig:Banniere_Meca}
-          \includegraphics[width=0.9\textwidth]{Images/Banniere_Meca.png}
-        \end{figure}
-
-        \vfill
-
-        \Large
-        \begin{flushleft}
-            \begin{tabular}{l}
-                Tuteurs de l'entreprise : Prénom NOM\\
-                Tuteur de l'école : Prénom NOM
-            \end{tabular}
-        \end{flushleft}
-
-        \begin{flushright}
-          Août 2022
-        \end{flushright}
-
-        \Large
-        \noindent\fbox{\begin{minipage}[c][0.3\textwidth]{\textwidth-7pt}%
-        \begin{center}
-        POLYTECH LYON - UNIVERSITE CLAUDE BERNARD LYON 1
-        \par\end{center}
-        \begin{center}
-        Domaine Scientifique de La Doua -- 15, Boulevard Latarjet
-        \par\end{center}
-        \begin{center}
-        69622 VILLEURBANNE CEDEX
-        \par\end{center}
-        \begin{center}
-        Tél. (33) 04.72.43.12.24 - Fax. (33) 04.72.43.12.25
-        \par\end{center}
-        \begin{center}
-        http://polytech.univ-lyon1.fr/
-        \par\end{center}%
-        \end{minipage}}
+        Aubière, Clermont-Ferrand
     \end{center}
 \end{titlepage}
 
@@ -410,28 +450,6 @@ autogobble
 %*-----------------------------------------------------------------------------*
 %* Début du résumé
 %*-----------------------------------------------------------------------------*
-
-% French
-
-\thispagestyle{empty}
-\begin{center}
-    \Large
-    \textbf{Titre}
-
-    \vspace{0.4cm}
-    \large
-    Sous titre
-
-    \vspace{0.4cm}
-    \textbf{Auteur}
-
-    \vspace{0.9cm}
-    \textbf{Résumé}
-\end{center}
-
-\blindtext
-
-% English
 
 \newpage
 \thispagestyle{empty}
@@ -480,476 +498,232 @@ autogobble
 %*-----------------------------------------------------------------------------*
 
 \newpage
-\chapter{Chapitre avec un titre extrêmement long, tellement long que personne n'utilisera jamais un titre pareil mais sait-on jamais}
+\section{Introduction}
+	Being able to follow a path once and repeat it optimally is a practical skill for mobile robots, especially in indoor environments where GPS is not available and tasks are repetitive by nature. Thus, this is the central idea behind Teach and Replay\cite{nourizadeh2024teachrepeatnavigationrobust}, the robot first performs a guided route while it registers the markers looking for a positioning reference of each tag and then uses this record of positions to reproduce the same route optimally.
 
-\section{Section}
+In this practical exercise, this concept was implemented on a LIMO mobile robot using its integrated RGB camera and AprilTag \cite{olson2011tags} fiducial markers positioned along a closed circuit with a start and end. During the teach phase, the robot completes a first turn while detecting the markers and saves the information from the positions of the robot in relation to the tags to represent the executed movement. After pressing the Y key of the Xbox controller or another controller's triangle, the system switches to the replay phase, where the robot tries to follow the learned trajectory. The goal is simple: complete the circuit, reducing the path deviation and maintaining a safe distance from the tags, but a restriction is imposed on the user of at least always seeing two tags in the camera.
 
-\myulineX{Ceci est un test permettant de déterminer si oui ou non la capacité à souligner sans briser le linebreak est fonctionnelle. En effet, Latex de base ne permet pas de réaliser cette manœuvre, mais grâce aux commandes du préambule, le sous-lignage est adaptatif selon les lettres utilisées et de plus est utilisable sur de longues phrases.}
+In order to develop the solution in a controlled way and evaluate its behavior in real conditions, a simulation workflow was made for reality. Therefore, it started in the Gazebo Ignition, where the perception and control components have been tested  and validated. We then transfer the same workflow to the real LIMO robot, where external noise such as lighting variation, motion blur, and wheel slippage naturally increase the challenge of detection quality for tracking performance. This report therefore documents not only the final system but also the changes that occurred when moving from simulation to a real platform.
 
-\subsection{Subsection}
+The rest of the report presents the requirements of the problem, justifying that it will be useful a tracking system trajectory, and also details the methodology proposed for the method Teach and Replay, both for the part of the validation in simulation and for the implementation in the real case, defines the evaluation metrics and discusses the results obtained with a direct comparison between simulated and real executions.
 
-\blindtext
 
-\subsubsection{Subsubsection}
 
-\blindtext
+\subsection{Motivation}
 
-\chapter{Tuto pratique}
+The motivation to do the work was that it will serve to help students from related areas of programming and robotics at Polytechnique de Clermont-Ferrand to use the system in a practical work, so they can understand how the simple camera perception part, using markers, can be applied directly to mobile robotics, understand the complexity of the transformations of positions used and how, with a simple camera and markers, it is possible to trace a trajectory and, with optimization, arrive at the best possible trajectory.
 
-\section{Les énumérations}
+\subsubsection{testesubsub}
 
-Différence de distance avec le texte :
+The motivation to do the work was that it will serve to help students from related areas of programming and robotics at Polytechnique de Clermont-Ferrand to use the system in a practical work, so they can understand how the simple camera perception part, using markers, can be applied directly to mobile robotics, understand the complexity of the transformations of positions used and how, with a simple camera and markers, it is possible to trace a trajectory and, with optimization, arrive at the best possible trajectory.
 
-\begin{itemize}
-	\item First
-	\item Second
-	\item Third
-\end{itemize}
+\subsection{Objectives}
+\subsubsection{General objective}
+\subsubsection{Specific objectives}
 
-Différence de distance avec le texte quand le code est collé :
-\begin{itemize}
-	\item First
-	\item Second
-	\item Third
-\end{itemize}\bigskip	% Important pour permettre l'espacement optimal du texte avec les listes.
+\section{Fundamentacao teorica}
 
-Les énumérations :
 
-\begin{enumerate}
-	\item First
-	\item Second
-	\item Third
-\end{enumerate}
 
-Les énumérations collées :
-\begin{enumerate}
-	\item First
-	\item Second
-	\item Third
-\end{enumerate}
+\subsection{Câmera RGB }
+\label{subsec:limo_camera_theory}
 
-\newpage
+A câmera RGB embarcada no robô LIMO constitui o principal sensor exteroceptivo utilizado neste projeto, fornecendo uma sequência de imagens 2D a partir das quais são extraídas observações geométricas (cantos de marcadores, contornos e, consequentemente, pose relativa). Do ponto de vista de modelagem, assume-se que o sistema óptico pode ser aproximado por um modelo de câmera pinhole\cite{Hartley2004} com distorção radial/tangencial, uma hipótese amplamente empregada em visão computacional quando o objetivo é relacionar pontos 3D no espaço a coordenadas 2D na imagem com precisão suficiente para estimação de pose.
 
-Si maintenant on veut s'amuser avec des subitems :
-\begin{itemize}
-	\item Item 1
-	\subitem Subitem 1
-	\subitem Subitem 2
-	\item Item 2
-	\subitem Subitem 1
-	\subsubitem Subsubitem 1
-	\subitem Subitem 2
-	\item Item 3
-\end{itemize}
-
-Et avec les énumérations :
-\begin{enumerate}
-	\item Item 1
-	\subitem Subitem 1
-	\subitem Subitem 2
-	\item Item 2
-	\subitem Subitem 1
-	\subsubitem Subsubitem 1
-	\subitem Subitem 2
-	\item Item 3
-\end{enumerate}
-
-Et si on joue avec les listes imbriquées :
-\begin{itemize}
-	\item First
-	\begin{itemize}
-		\item Item
-		\item Item
-		\begin{itemize}
-			\item Item
-		\end{itemize}
-	\end{itemize}
-	\item Second
-	\item Third
-\end{itemize}
-
-Et si on joue avec les énumérations imbriquées :
-\begin{enumerate}
-	\item First
-	\begin{enumerate}
-		\item Item
-		\item Item
-		\begin{enumerate}
-			\item Item
-		\end{enumerate}
-	\end{enumerate}
-	\item Second
-	\item Third
-\end{enumerate}
-
-\newpage
-
-Les descriptions :
-\begin{description}
-	\item[CMS :] Un système de gestion de contenu ou SGC...
-	\item[Framework :] En programmation informatique, un framework....
-	\item[SGBD :] Un système de gestion de base de données...
-\end{description}
-
-\section{Les acronymes et les glossaires}
-
-C'est fou, on peut imprimer les entrées de glossaire de cette manière pour que sa position soit identifiée dans le glossaire : \gls{mot_complexe}
-
-Et pour les acronymes c'est encore mieux, on a plein d'options:
-\begin{itemize}
-    \item \acrshort{lfala}
-        \item \acrlong{lfala}
-    \item \acrfull{lfala}
-\end{itemize}
-
-\section{Les figures et sous figures}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.25\textwidth]{example-image-a}
-    \caption{Image A}
-    \label{fig:example-image-a}
+Conforme ilustrado na Figura~\ref{fig:pinhole_model}, um ponto 3D no referencial da câmera projeta-se no plano de imagem segundo o modelo pinhole.
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.5\linewidth]{Images/model_pinhole.png}
+	\caption{Modelo pinhole: projeção de um ponto 3D $P(X,Y,Z)$ no plano de imagem, indicando o centro de projeção e o ponto principal.}
+	\label{fig:pinhole_model}
 \end{figure}
 
-On peut même les référencer : figure \ref{fig:example-image-a}
-
-\begin{figure}[H]
-    \begin{subfigure}[t]{0.475\textwidth}
-        \includegraphics[width=1\textwidth]{example-image-b}
-        \caption{Image B}
-        \label{subfig:example-image-b}
-    \end{subfigure}%
-    \hfill
-    \begin{subfigure}[t]{0.475\textwidth}
-        \includegraphics[width=1\textwidth]{example-image-c}
-        \caption{Image C}
-        \label{subfig:example-image-c}
-    \end{subfigure}
-    \caption{Example d'utilisation des sous-figures}
-    \label{fig:test_subfigure}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.25\textwidth]{example-image}
-    \caption{Image}
-    \label{fig:example-image}
-\end{figure}
-
-\section{Les tableaux}
-
-\begin{table}[H]
-\centering
-\begin{tabular}{||c c c c||}
- \hline
- Col1 & Col2 & Col2 & Col3 \\ [0.5ex]
- \hline\hline
- 1 & 6 & 87837 & 787 \\
- 2 & 7 & 78 & 5415 \\
- 3 & 545 & 778 & 7507 \\
- 4 & 545 & 18744 & 7560 \\
- 5 & 88 & 788 & 6344 \\ [1ex]
- \hline
-\end{tabular}
-\caption{Table to test captions and labels.}
-\label{table:1}
-\end{table}
-
-\begin{table}[H]
-    \begin{subtable}[h]{0.45\textwidth}
-        \centering
-        \begin{tabular}{l | l | l}
-        Day & Max Temp & Min Temp \\
-        \hline \hline
-        Mon & 20 & 13\\
-        Tue & 22 & 14\\
-        Wed & 23 & 12\\
-        Thurs & 25 & 13\\
-        Fri & 18 & 7\\
-        Sat & 15 & 13\\
-        Sun & 20 & 13
-       \end{tabular}
-       \caption{First Week}
-       \label{subtab:week1}
-    \end{subtable}%
-    \hfill
-    \begin{subtable}[h]{0.45\textwidth}
-        \centering
-        \begin{tabular}{l | l | l}
-        Day & Max Temp & Min Temp \\
-        \hline \hline
-        Mon & 17 & 11\\
-        Tue & 16 & 10\\
-        Wed & 14 & 8\\
-        Thurs & 12 & 5\\
-        Fri & 15 & 7\\
-        Sat & 16 & 12\\
-        Sun & 15 & 9
-        \end{tabular}
-        \caption{Second Week}
-        \label{subtab:week2}
-     \end{subtable}
-     \caption{Max and min temps recorded in the first two weeks of July}
-     \label{tab:temps}
-\end{table}
-
-\begin{table}[H]
-\centering
-\begin{tabular}{|ll|r|}
-\hline
-\multicolumn{2}{|c|}{Item}                    &            \\ \hline
-\multicolumn{1}{|l|}{Animal}    & Description & Price (\$) \\ \hline
-\multicolumn{1}{|l|}{Gnat}      & per gram    & 13.65      \\ \hline
-\multicolumn{1}{|l|}{}          & each        & 0.01       \\ \hline
-\multicolumn{1}{|l|}{Gnu}       & stuffed     & 92.50      \\ \hline
-\multicolumn{1}{|l|}{Emu}       & stuffed     & 33.33      \\ \hline
-\multicolumn{1}{|l|}{Armadillo} & frozen      & 8.99       \\ \hline
-\end{tabular}
-\caption{Exemple supplémentaire}
-\label{tab:exemple_sup}
-\end{table}
-
-\section{Les équations}
-
+Seja um ponto no referencial da câmera $\mathbf{p}_c=[X_c\;Y_c\;Z_c]^\top$, com $Z_c>0$. Sua projeção ideal\cite{Hartley2004} (sem distorção) no plano normalizado é dada por
 \begin{equation}
-    ax^2+bx+c=\Delta
+	x_n = \frac{X_c}{Z_c}, \qquad y_n = \frac{Y_c}{Z_c}.
+	\label{eq:normalized_coords}
 \end{equation}
+A passagem para coordenadas de pixel é determinada pela matriz intrínseca $K$,
+\begin{equation}
+	\begin{bmatrix}
+		u\\v\\1
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		f_x & 0 & c_x\\
+		0 & f_y & c_y\\
+		0 & 0 & 1
+	\end{bmatrix}
+	\begin{bmatrix}
+		x_n\\y_n\\1
+	\end{bmatrix},
+	\label{eq:intrinsics}
+\end{equation}
+onde $f_x,f_y$ são as distâncias focais em unidades de pixel e $(c_x,c_y)$ é o centro principal. Na prática, lentes reais introduzem distorção, e a relação entre coordenadas normalizadas ideais $(x_n,y_n)$ e coordenadas distorcidas $(x_d,y_d)$ é frequentemente modelada por termos radiais e tangenciais. Definindo $r^2=x_n^2+y_n^2$, um modelo comum é
+\begin{equation}
+	x_d = x_n\big(1+k_1 r^2 + k_2 r^4 + k_3 r^6\big) + 2p_1 x_n y_n + p_2(r^2+2x_n^2),
+	\label{eq:distortion_x}
+\end{equation}
+\begin{equation}
+	y_d = y_n\big(1+k_1 r^2 + k_2 r^4 + k_3 r^6\big) + p_1(r^2+2y_n^2) + 2p_2 x_n y_n,
+	\label{eq:distortion_y}
+\end{equation}
+e então $(u,v)$ são obtidos substituindo $(x_d,y_d)$ em \eqref{eq:intrinsics}. A relevância dessas equações para o presente trabalho decorre do fato de que a estimação de pose baseada em marcadores planares (como AprilTags) depende da precisão na localização de cantos e, portanto, da fidelidade do mapeamento entre o espaço projetivo e o plano de imagem. Mesmo pequenas distorções não modeladas podem introduzir viés sistemático nos cantos detectados, o que se propaga para erros em rotação e translação.
 
-\begin{align*}  % Le & permet de choisir où on souhaite aligner l'équation
-    35x+6&=4\\
-    &=z+2
-\end{align*}
+Além da geometria, propriedades físicas do sensor influenciam diretamente a qualidade da percepção. Em particular, ruído de intensidade, compressão e variações de exposição alteram o contraste local utilizado em binarização/adaptação de limiar, enquanto o desfoque de movimento (motion blur) reduz a nitidez de bordas e prejudica a extração de contornos. Um modelo simplificado do motion blur pode ser escrito como uma convolução espacial
+\begin{equation}
+	I_{\text{blur}} = I * h,
+	\label{eq:motion_blur}
+\end{equation}
+onde $I$ é a imagem ideal e $h$ é um kernel de borramento dependente da velocidade relativa e do tempo de exposição. No contexto de detecção de marcadores, essa degradação afeta principalmente a estimação subpixel dos cantos, reduzindo a repetibilidade das poses obtidas entre frames.
 
-\noteworthy{P(\bigcup_{n=1}^n A_n) \leq \sum_{n=1}^n P(A_n)}{Boole's inequality}
+Finalmente, para tarefas de navegação, a câmera deve ser interpretada como um sensor que produz medições com incerteza. Assim, as observações de cantos (e, por consequência, a pose estimada) podem ser vistas como variáveis aleatórias. Um modelo usual assume erro gaussiano aditivo em pixels,
+\begin{equation}
+	\hat{\mathbf{u}}_i = \mathbf{u}_i + \boldsymbol{\epsilon}_i,
+	\qquad
+	\boldsymbol{\epsilon}_i \sim \mathcal{N}(\mathbf{0},\Sigma_u),
+	\label{eq:corner_noise}
+\end{equation}
+o que justifica, posteriormente, o uso de refinamento por minimização de erro de reprojeção (na estimação de pose) e a adoção de estratégias de controle robustas no seguimento de trajetória.
 
-\noteworthy{E=mc^2}{E=M6 tmtc}
+Em síntese, o modelo pinhole com intrínsecos e distorção (\eqref{eq:normalized_coords}--\eqref{eq:distortion_y}), aliado às considerações de ruído e borramento (\eqref{eq:motion_blur}--\eqref{eq:corner_noise}), fornece a base teórica para compreender como a câmera RGB do LIMO influencia a detecção de marcadores e a qualidade das estimativas geométricas utilizadas no restante do sistema.
 
-On peut meme les citer : \ref{Boole's inequality}
 
-Oh et évidemment on peut mettre des maths rapidement dans le texte $u_2 = 273.29 \ m.s^{-1}$. Par exemple ici un petit tips sur comment espacer rapidement les unités ! Bon en l'occurrence on aurait aussi pu utiliser \si{\meter\per\second} mais bon, qui peut le plus peut le moins.
 
-\section{Les codes}
 
-\begin{longlisting}
-\begin{minted}{python}
-import numpy as np
-import math
-from matplotlib import pyplot as plt
 
-# Creation de notre structure et discretisation
-def generation_structure(r_min, r_max, nnr, nntheta, oval, R, theta):
-    # Creation des matrices x et y
-    x = np.zeros((nntheta, nnr))
-    y = np.zeros((nntheta, nnr))
-    for j in range(0, nnr):
-        for i in range(0, nntheta):
-            x[i, j] = (R[j]+(oval/2.0))*math.cos(theta[i])
-            y[i, j] = (R[j]-(oval/2.0))*math.sin(theta[i])
-    return x, y
 
-# Generation du maillage triangulaire
-def maillage(x,y,nntheta,nnr,netheta,ner):
-    # Creation des matrices de coordonnées et de la table de connection
-    coord = np.zeros((nntheta*nnr, 2))
-    table = np.zeros((2*netheta*ner, 3), dtype='int')
-    # Creation des variables
-    Ne = 0
-    i = 0
-    j = 0
+\subsection{AprilTag}
+\label{subsec:apriltag_theory}
 
-    while j < nntheta-1:
-        i = 0
-        while i < nnr:
-            if 0 < i and (Ne+1) % 2 == 0:  # Triangle avec une base en haut
-                A1 = j*nnr+i
-                xA1 = x[j, i]
-                yA1 = y[j, i]
-                A2 = (j+1)*nnr+i
-                xA2 = x[j+1, i]
-                yA2 = y[j+1, i]
-                A3 = (j+1)*nnr+i-1
-                xA3 = x[j+1, i-1]
-                yA3 = y[j+1, i-1]
-                if i == nnr-1:   # On arrête d'avancer, pour faire le dernier triangle supérieur
-                    i = i+1
-            elif 0 <= i < nnr:   # Triangle avec une base en bas
-                A1 = j*nnr+i
-                xA1 = x[j, i]
-                yA1 = y[j, i]
-                A2 = j*nnr+i+1
-                xA2 = x[j, i+1]
-                yA2 = y[j, i+1]
-                A3 = (j+1)*nnr+i
-                xA3 = x[j+1, i]
-                yA3 = y[j+1, i]
-                i = i+1    # Avancement le long des x
+AprilTags são marcadores fiduciais planares projetados para fornecer, a partir de uma única imagem, duas informações fundamentais para robótica móvel: (i) uma identificação discreta (ID) e (ii) uma estimativa geométrica de pose 6-DoF do marcador em relação à câmera. A proposta do sistema não é maximizar capacidade de dados, mas sim garantir detecção estável e baixa taxa de falsos positivos sob variações de escala, rotação e iluminação, o que as torna adequadas como \emph{landmarks} artificiais em tarefas de localização e navegação \cite{olson2011tags}. O detector foi redesenhado no AprilTag 2 com foco explícito em eficiência e robustez computacional \cite{wang2016iros}, e o AprilTag 3 generaliza o uso de layouts e discute critérios de complexidade para preservar confiabilidade mesmo ao ampliar o espaço de padrões possíveis \cite{krogius2019iros}.
 
-            # Remplissage de la table de connectivité avec les noeuds de l'element
-            table[Ne, 0] = int(A1)
-            table[Ne, 1] = int(A2)
-            table[Ne, 2] = int(A3)
-
-            # Remplissage des coordonnées des points de l'element
-            coord[A1, 0] = xA1
-            coord[A1, 1] = yA1
-            coord[A2, 0] = xA2
-            coord[A2, 1] = yA2
-            coord[A3, 0] = xA3
-            coord[A3, 1] = yA3
-
-            # On passe aux nombres d'elements suivants
-            Ne = Ne+1
-
-        j = j+1
-    return coord, table
-
-# Affichage du maillage généré
-def affichage_maillage(coord, table, netheta, ner):
-    # On affiche l'element juste créé
-    plt.figure()
-    for k in range(0, 2*netheta*ner):
-        # On trace un trait entre chaque noeuds d'un element
-        plt.axis('equal')
-        plt.plot([coord[table[k, 0], 0],
-        coord[table[k, 1], 0]], [coord[table[k, 0], 1],
-        coord[table[k, 1], 1]], 'r')
-        plt.plot([coord[table[k, 2], 0],
-        coord[table[k, 1], 0]], [coord[table[k, 2], 1],
-        coord[table[k, 1], 1]], 'g')
-        plt.plot([coord[table[k, 0], 0],
-        coord[table[k, 2], 0]], [coord[table[k, 0], 1],
-        coord[table[k, 2], 1]], 'b')
-\end{minted}
-\caption{Génération du maillage éléments finis sous Python}
-\label{lst:PT_Mesh.py}
-\end{longlisting}
-
-\mint{python}|print("hello")| % Équivalent de \minted mais plus court
-
-On peut meme le faire sur une ligne : \mintinline{python}|print("hello")|   % Quand t'as qu'une ligne de code
-
-\section{Les index}
-
-Quand ton texte contient un mot\index{mot} important\index{important}, tu peux l'indexer comme ça et il apparaîtra avec sa position dans l'index.
-
-\chapter{Séparation dans les listes}
-
-\section{Debug}
-
-Ce chapitre sert juste à vérifier que la séparation entre chapitre fonctionne bien dans les listes.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.25\textwidth]{example-image-golden}
-    \caption{Image golden}
-    \label{fig:example-image-golden}
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.35\linewidth]{Images/tag_size_48h12.png}
+	\caption{Estrutura de uma AprilTag: borda de alto contraste e região de dados (payload) usada na identificação.}
+	\label{fig:apriltag_structure}
 \end{figure}
 
-\begin{figure}[H]
-    \begin{subfigure}[t]{0.475\textwidth}
-        \includegraphics[width=1\textwidth]{example-grid-100x100pt}
-        \caption{Image grille}
-        \label{subfig:example-grid}
-    \end{subfigure}%
-    \hfill
-    \begin{subfigure}[t]{0.475\textwidth}
-        \includegraphics[width=1\textwidth]{example-grid-100x100pt}
-        \caption{Image grille}
-        \label{subfig:example-grid_bis}
-    \end{subfigure}
-    \caption{Example d'utilisation des sous-figures}
-    \label{fig:test_subfigure_bis}
+Para contextualizar a estrutura de uma tag e o papel da borda e das células internas na decodificação, recomenda-se inserir na Figura~\ref{fig:apriltag_structure} um exemplo de AprilTag (família e ID) destacando a borda e a região de dados. Em seguida, para conectar a teoria ao pipeline perceptivo, recomenda-se inserir na Figura~\ref{fig:apriltag_pipeline} um fluxograma curto do detector (binarização adaptativa, extração de contornos/quadriláteros, retificação e decodificação), conforme discutido em \cite{wang2016iros,krogius2019iros}.
+
+
+
+\begin{figure}[h!]
+	\centering
+	 \includegraphics[width=0.4\linewidth]{Images/repre_exemple.png}
+	\caption{Pipeline conceitual de detecção: imagem $\rightarrow$ limiarização adaptativa $\rightarrow$ extração de candidatos (quads) $\rightarrow$ retificação por homografia $\rightarrow$ leitura de bits e validação do ID.}
+	\label{fig:apriltag_pipeline}
 \end{figure}
 
-\begin{table}[H]
-\centering
-\begin{tabular}{|ll|r|}
-\hline
-\multicolumn{2}{|c|}{\textit{\textbf{Item}}}                                      & \textit{\textbf{}}           \\ \hline
-\multicolumn{1}{|l|}{\textit{\textbf{Animal}}}    & \textit{\textbf{Description}} & \textit{\textbf{Price (\$)}} \\ \hline
-\multicolumn{1}{|l|}{\textit{\textbf{Gnat}}}      & \textit{\textbf{per gram}}    & \textit{\textbf{13.65}}      \\ \hline
-\multicolumn{1}{|l|}{\textit{\textbf{}}}          & \textit{\textbf{each}}        & \textit{\textbf{0.01}}       \\ \hline
-\multicolumn{1}{|l|}{\textit{\textbf{Gnu}}}       & \textit{\textbf{stuffed}}     & \textit{\textbf{92.50}}      \\ \hline
-\multicolumn{1}{|l|}{\textit{\textbf{Emu}}}       & \textit{\textbf{stuffed}}     & \textit{\textbf{33.33}}      \\ \hline
-\multicolumn{1}{|l|}{\textit{\textbf{Armadillo}}} & \textit{\textbf{frozen}}      & \textit{\textbf{8.99}}       \\ \hline
-\end{tabular}
-\caption{Test de tableau}
-\label{tab:test_tableau}
-\end{table}
+\subsubsection{Decodificação confiável: códigos, rotações e distância de Hamming}
+A confiabilidade do ID decorre do projeto de famílias de códigos que se mantêm separáveis mesmo quando a tag é observada sob rotações de $0^\circ, 90^\circ, 180^\circ$ e $270^\circ$. Considerando palavras binárias $a,b\in\{0,1\}^n$, a separação entre dois códigos é medida pela distância de Hamming,
+\begin{equation}
+	d_H(a,b) \;=\; \sum_{k=1}^{n}\mathbb{I}\{a_k\neq b_k\},
+	\label{eq:hamming}
+\end{equation}
+e a geração da família impõe uma distância mínima (incluindo as rotações como equivalências), o que reduz ambiguidades de orientação e diminui a probabilidade de padrões naturais serem aceitos como IDs válidos \cite{olson2011tags,wang2016iros}. Para uma distância mínima $d$, a capacidade teórica clássica de correção por decisão de vizinho mais próximo é
+\begin{equation}
+	t \;=\; \left\lfloor\frac{d-1}{2}\right\rfloor,
+	\label{eq:ecap}
+\end{equation}
+embora, em aplicações robóticas, uma prática frequente seja rejeitar leituras com erros para diminuir ainda mais falsos positivos \cite{wang2016iros}. Essa combinação (família bem separada e validação estrita) é a base para tratar AprilTags como marcadores ``fiáveis'' em ambientes reais.
 
-\noteworthy{a+b+c=d}{Une équation très utile}
+\subsubsection{Detecção robusta: limiarização adaptativa e extração do quadrilátero}
+O detector precisa localizar geometricamente a tag antes de decodificar bits. Em cenários reais, um limiar global falha com sombras e iluminação não uniforme; por isso, o AprilTag 2 usa limiarização adaptativa baseada em estatísticas locais (mínimo e máximo) para obter uma binarização que preserve transições preto--branco relevantes \cite{wang2016iros}. Uma forma canônica de expressar esse princípio é definir, para uma vizinhança $\Omega(x,y)$, um limiar
+\begin{equation}
+	T(x,y)\;=\;\frac{\max\limits_{(i,j)\in\Omega(x,y)} I(i,j) + \min\limits_{(i,j)\in\Omega(x,y)} I(i,j)}{2},
+	\qquad
+	I_b(x,y)\;=\;\mathbb{I}\{I(x,y)\ge T(x,y)\},
+	\label{eq:adaptive_threshold}
+\end{equation}
+onde $I$ é a imagem em tons de cinza e $I_b$ a imagem binária. Em seguida, etapas eficientes de segmentação (por exemplo, por componentes conexas) e agrupamento de bordas permitem construir candidatos a quadriláteros (quads) que satisfaçam restrições geométricas compatíveis com a projeção de um quadrado planar \cite{wang2016iros}. No AprilTag 3, mantém-se a estrutura do pipeline e discute-se ainda o controle de desempenho por decimação e ajustes voltados a aumentar \emph{recall} em tags pequenas \cite{krogius2019iros}.
 
-\noteworthy{\Delta=b^2-4ac}{La formule utile à tout niveau}
+Para ilustrar a saída perceptiva em nível de imagem (o que o detector realmente ``vê''), recomenda-se inserir na Figura~\ref{fig:apriltag_detection_example} um frame real ou do simulador com o contorno do quad e o ID sobreposto; se disponível, incluir também os eixos de pose desenhados sobre a tag (isso ajuda a conectar diretamente com a seção de metodologia/controle).
 
-\begin{listing}[H]
-\begin{minted}{c++}
-    /*
-     * Once upon a time... In a galaxy far away from ou 24 hours block
-     */
+\begin{figure}[t]
+	\centering
+	% \includegraphics[width=0.85\linewidth]{figs/apriltag_detection_example.png}
+	\caption{Exemplo de detecção em imagem: quadrilátero estimado, ID decodificado e (opcionalmente) eixos de pose sobrepostos.}
+	\label{fig:apriltag_detection_example}
+\end{figure}
 
-    class Vampire {
-      constructor(props) {
-        this.location = props.location;
-        this.birthDate = props.birthDate;
-        this.deathDate = props.deathDate;
-        this.weaknesses = props.weaknesses;
-      }
+\subsubsection{Por que a pose é estimável: geometria projetiva e homografia}
+Uma AprilTag é um alvo planar de geometria conhecida; logo, ao observar seus quatro cantos na imagem, a relação entre o plano da tag e o plano de imagem é modelada por uma transformação projetiva (homografia). Assumindo câmera pinhole com matriz intrínseca $K$, um ponto $\mathbf{X}=[X\;Y\;0]^\top$ no plano da tag projeta-se como
+\begin{equation}
+	\lambda
+	\begin{bmatrix}
+		u\\v\\1
+	\end{bmatrix}
+	=
+	K
+	\left[\;{}^{\text{camera}}\!R_{\text{tag}}\;\;{}^{\text{camera}}\!t_{\text{tag}}\;\right]
+	\begin{bmatrix}
+		X\\Y\\0\\1
+	\end{bmatrix}
+	=
+	K\,[\,r_1\;\;r_2\;\;t\,]
+	\begin{bmatrix}
+		X\\Y\\1
+	\end{bmatrix},
+	\label{eq:proj_planar}
+\end{equation}
+o que define a homografia
+\begin{equation}
+	H \;=\; K[\,r_1\;\;r_2\;\;t\,],
+	\label{eq:H_def}
+\end{equation}
+com $r_1,r_2$ as duas primeiras colunas de ${}^{\text{camera}}\!R_{\text{tag}}$ e $t={}^{\text{camera}}\!t_{\text{tag}}$ \cite{olson2011tags}. Assim, a detecção dos cantos fornece correspondências suficientes para estimar $H$; a partir disso, recupera-se uma estimativa inicial de pose, normalizando escala e impondo ortogonalidade em $R$.
 
-      get age() {
-        return this.calcAge();
-      }
+Em nível prático, uma pose mais precisa é obtida ao refinar $(R,t)$ por minimização do erro de reprojeção dos cantos observados. Denotando por $\mathbf{u}_i$ os cantos medidos na imagem e por $\mathbf{X}_i$ os cantos conhecidos no plano da tag, o refinamento pode ser formulado como
+\begin{equation}
+	\min_{{}^{\text{camera}}\!R_{\text{tag}}\in SO(3),\,{}^{\text{camera}}\!t_{\text{tag}}}\;
+	\sum_{i=1}^{4}
+	\left\|
+	\mathbf{u}_i-\pi\!\Big(K\big({}^{\text{camera}}\!R_{\text{tag}}\mathbf{X}_i+{}^{\text{camera}}\!t_{\text{tag}}\big)\Big)
+	\right\|^2,
+	\label{eq:reproj_refine}
+\end{equation}
+onde $\pi([x\;y\;z]^\top)=[x/z\;\;y/z]^\top$. Esta equação é a ponte entre percepção e controle: ao reduzir erro de reprojeção, reduz-se a incerteza na pose estimada, o que melhora diretamente a estabilidade do seguimento de trajetória em robótica móvel.
 
-      calcAge() {
-        return this.deathDate - this.birthDate;
-      }
-    }
+Para reforçar visualmente a ligação entre cantos, retificação e leitura de bits, recomenda-se inserir na Figura~\ref{fig:apriltag_warp} um esquema com (a) a tag observada em perspectiva, (b) os quatro cantos detectados, e (c) o patch retificado (vista canônica) usado para amostragem do payload.
 
-    // ...there was a guy named Vlad 666
+\begin{figure}[t]
+	\centering
+	% \includegraphics[width=0.90\linewidth]{figs/apriltag_warp.pdf}
+	\caption{Geometria da retificação: cantos detectados $\rightarrow$ estimação de homografia $H$ $\rightarrow$ patch canônico para leitura do payload.}
+	\label{fig:apriltag_warp}
+\end{figure}
 
-    const Dracula = new Vampire({
-      location: 'Transylvania',
-      birthDate: 1428,
-      deathDate: 1476,
-      weaknesses: ['Sunlight', 'Garlic']
-    });
-\end{minted}
-\caption{Dracula sample.c}
-\label{lst:dracula.c}
-\end{listing}
+\subsubsection{AprilTag 3 e confiabilidade sob generalização de layouts}
+O AprilTag 3 estende o sistema ao permitir layouts mais flexíveis, o que amplia possibilidades de desenho (incluindo regiões ignoradas e diferentes distribuições de bits), mas torna ainda mais importante controlar falsos positivos. O trabalho discute critérios de complexidade para garantir que os padrões gerados sejam improváveis em imagens naturais; entre eles, avalia-se a energia do modelo de Ising aplicada à imagem binária do layout \cite{krogius2019iros}. Em termos discretos, uma escrita típica dessa métrica é
+\begin{equation}
+	E \;=\; \sum_{i,j}\Big(
+	\mathbb{I}\{I(i,j)\neq I(i,j+1)\}+
+	\mathbb{I}\{I(i,j)\neq I(i+1,j)\}
+	\Big),
+	\label{eq:ising_energy}
+\end{equation}
+que corresponde ao comprimento total de fronteiras preto--branco. A intuição é que padrões com estrutura local ``muito regular'' tendem a ocorrer com maior probabilidade em cenas artificiais/naturais; logo, impor complexidade adequada reduz a chance de um padrão aleatório passar pelo processo de validação e ser aceito como tag \cite{krogius2019iros}.
 
-\begin{listing}[H]
-\begin{minted}{c++}
-    #include <stdio.h>
 
-    // Ceci est un test de validation du linebreak automatique des codes à l'aide du package minted. Veuillez ne pas faire attention. Ou un petit peu mais pas trop.
+\section{Metodologia}
 
-    int main() {
 
-    int number1, number2, sum;
-    number1 = 5;
 
-    for(i=0,i<5,i++)
-    {
-        a=b+c+12.5;
-        d=1e-4;
-        g=124e6;
-        h=sqrt(cos(x));
-    }
+\section{Results}
 
-    printf("Enter two integers: ");
-    scanf("%d %d", &number1, &number2);
 
-    // calculating sum
-    sum = number1 + number2;
+\section{Discussion}
 
-    printf("%d + %d = %d", number1, number2, sum);
-    return 0;
-\end{minted}
-\caption{sample.c}
-\label{lst:sample.c}
-\end{listing}
 
-Et un exemple\index{exemple} d'index pour la route !
+\section{Conclusion}
+
+
+
+\newpage
+
+\printbibliography[heading=bibintoc,title={References}]
 
 %*-----------------------------------------------------------------------------*
 %* Fin du corps du document
@@ -959,45 +733,7 @@ Et un exemple\index{exemple} d'index pour la route !
 %* Début listes & Co
 %*-----------------------------------------------------------------------------*
 
-\newpage
-\listoffigures
 
-\newpage
-\listoftables
-
-\newpage
-\listofmyequations
-
-\newpage
-\listoflistings
-
-\newpage
-\printindex
-
-\newpage
-\printbibliography[heading=bibintoc]
-
-%*-----------------------------------------------------------------------------*
-%* Fin listes & Co
-%*-----------------------------------------------------------------------------*
-
-%*-----------------------------------------------------------------------------*
-%* Début des annexes
-%*-----------------------------------------------------------------------------*
-
-\begin{appendices}
-
-\chapter*{Table des annexes}
-\startcontents[chapter]
-\printcontents[chapter]{l}{0}{\setcounter{tocdepth}{3}}
-
-\chapter{Première annexe}
-
-\cite{CitekeyBook}
-
-\includepdf[pages=-,width=10cm]{example-image-a4}
-
-\end{appendices}
 
 %*-----------------------------------------------------------------------------*
 %* Fin des annexes
