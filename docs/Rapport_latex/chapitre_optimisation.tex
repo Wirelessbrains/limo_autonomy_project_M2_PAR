@@ -93,10 +93,59 @@ R_B & \bm{t}_B \\
 \end{bmatrix}
 \end{equation}
 
+Assim, dado que o nosso ambiente é conhecido, ou seja a pose das todas as trafomaçoes 
+das tags sao conhecidas, de igual modo é possivel localizar a pose do robo.
 
+A partir da detecçao da pose da tag em realçao a camera é feito uma tranformaçao
+inversa da pose da tag até a camera para encontrar qual a pose da comaera em ralaçao a tag
 
+\begin{equation}
+    T_{W,C} = T_{W,T} * (T_{C,T})^{-1}
+\end{equation}
 
+Em que: 
 
+\begin{equation}
+    $T_{W,T}$ é a posição da Tag no seu mapa (onde a Tag 0 é a origem).
+    $T_{C,T}$ é a detecção (a Tag vista pela Câmera).
+    $(T_{C,T})^{-1}$ é a pose da Câmera em relação à Tag.
+\end{equation}
 
+Se a tag que a camera vé nao é a tag zero, mas dado que o ambiente foi mapeado, sabemos a pose
+desta tag em relaçao a tag0 e asse por meio de tranformaçao inversa é possivel calcular a pose 
+da camera.
 
-\subsubsection{Subsubsection}
+Para pose da camera quanto mais tags forem vista mais precisao temos para a pose da camera,
+visto que podemos calcular a media da pose da camera no mundo em ralaçao a cada tag. Por 
+um metodo chamado SLERP, que envolve a converçao da rotaçao para quartenion. 
+
+\subsection{Fusão de Poses da Câmera via Interpolação Esférica (SLERP)}
+
+Quando a câmera observa simultaneamente múltiplas etiquetas, as estimativas individuais da pose da câmera no referencial global ($\mathbf{P}_{W,C}$) são fundidas para reduzir ruídos de detecção. O processo de fusão é dividido em três etapas: conversão de representação, média de translação e interpolação esférica de rotação.
+
+\subsubsection{Conversão de Matriz de Rotação para Quaternion}
+As matrizes de rotação $\mathbf{R} \in SO(3)$ obtidas do sistema de visão são convertidas para quaternions unitários $\mathbf{q} = [w, x, y, z]^T$. Dada uma matriz $\mathbf{R}$ com elementos $r_{ij}$, o componente escalar $w$ é calculado a partir do traço da matriz ($Tr(\mathbf{R})$):
+\begin{equation}
+    w = \frac{1}{2} \sqrt{1 + r_{11} + r_{22} + r_{33}}
+\end{equation}
+Os demais componentes $(x, y, z)$ são derivados das diferenças entre os elementos simétricos da matriz:
+\begin{equation}
+    x = \frac{r_{32} - r_{23}}{4w}, \quad y = \frac{r_{13} - r_{31}}{4w}, \quad z = \frac{r_{21} - r_{12}}{4w}
+\end{equation}
+
+\subsubsection{Média da Translação (Posição)}
+A posição final da câmera é calculada através da média aritmética simples das estimativas de posição $\mathbf{p}_1$ e $\mathbf{p}_2$:
+\begin{equation}
+    \mathbf{p}_{avg} = \frac{\mathbf{p}_1 + \mathbf{p}_2}{2}
+\end{equation}
+
+\subsubsection{Interpolação Esférica Linear (SLERP)}
+Para a rotação, utiliza-se o \textit{Spherical Linear Interpolation} (SLERP), que realiza a interpolação ao longo do arco da hiperesfera unitária. Para duas rotações $\mathbf{q}_1$ e $\mathbf{q}_2$ com fator de peso $t=0.5$:
+
+\begin{enumerate}
+    \item \textbf{Caminho Curto:} Calcula-se o produto escalar $\cos(\theta) = \mathbf{q}_1 \cdot \mathbf{q}_2$. Se $\cos(\theta) < 0$, inverte-se o sinal de um dos quaternions ($\mathbf{q}_2 = -\mathbf{q}_2$) para garantir o caminho mais curto.
+    \item \textbf{Cálculo do SLERP:}
+    \begin{equation}
+        \mathbf{q}_{avg} = \frac{\sin((1-t)\theta)}{\sin(\theta)}\mathbf{q}_1 + \frac{\sin(t\theta)}{\sin(\theta)}\mathbf{q}_2
+    \end{equation}
+\end{enumerate}
