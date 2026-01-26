@@ -171,35 +171,29 @@ headheight=2cm,headsep=0.5cm,heightrounded=true
 
 \renewcommand\nomgroup[1]{%
 	\item[\bfseries
-	\ifstrequal{#1}{A}{Camera Model}{%
-		\ifstrequal{#1}{B}{Geometry and Transformations}{%
-			\ifstrequal{#1}{C}{AprilTag and Algorithms}{%
+	\ifstrequal{#1}{A}{Modelo de Câmera}{%
+		\ifstrequal{#1}{B}{Geometria e Transformações}{%
+			\ifstrequal{#1}{C}{AprilTag e Algoritmos}{%
 	}}}%
 	]}
 
 \AtBeginDocument{
-	\nomenclature[A]{$K$}{Intrinsic camera matrix (internal parameters)}
-	\nomenclature[A]{$f_x, f_y$}{Focal lengths expressed in pixels}
-	\nomenclature[A]{$(c_x, c_y)$}{Coordinates of the principal point of the image}
-	\nomenclature[A]{$(u, v)$}{Pixel coordinates in the image}
-	\nomenclature[A]{$\mathbf{p}_c$}{3D point expressed in the camera reference frame $[X_c\;Y_c\;Z_c]^\top$}
-	\nomenclature[A]{$(x_n, y_n)$}{Normalized coordinates in the image plane}
-	\nomenclature[A]{$(x_d, y_d)$}{Distorted image coordinates}
-	\nomenclature[A]{$k_i, p_i$}{Radial and tangential distortion coefficients}
-	\nomenclature[A]{$\mathbf{u}_i$}{Observed pixel coordinates (measurement)}
-	\nomenclature[A]{$\boldsymbol{\epsilon}_i$}{Measurement noise associated with corner observation}
-	\nomenclature[A]{$\Sigma_u$}{Covariance matrix of measurement noise}
-	\nomenclature[A]{$\pi(\cdot)$}{Perspective projection function $\pi([x,y,z]^\top) = [x/z, y/z]^\top$}
-	\nomenclature[A]{$\lambda$}{Scale factor (depth $Z_c$)}
-	\nomenclature[B]{${}^{A}T_{B}$}{Homogeneous transformation matrix from reference frame B to A}
-	\nomenclature[B]{$SE(3)$}{Special Euclidean group (rigid transformations in 3D)}
-	\nomenclature[B]{$SO(3)$}{Special Orthogonal group (rotations in 3D)}
-	\nomenclature[B]{$R$}{Rotation matrix $SO(3)$}
-	\nomenclature[B]{$t$}{Translation vector $\mathbb{R}^3$}
-	\nomenclature[C]{$d_H(a,b)$}{Hamming distance between two binary codes}
-	\nomenclature[C]{$\rho^r(\cdot)$}{Bitwise rotation function by $90^\circ$ increments}
-	\nomenclature[C]{$\mathbb{I}\{\cdot\}$}{Indicator function (1 if true, 0 otherwise)}
-	\nomenclature[C]{$H$}{Planar homography matrix}
+	\nomenclature[A]{$K$}{Matriz intrínseca da câmera (parâmetros internos)}
+	\nomenclature[A]{$f_x, f_y$}{Distâncias focais expressas em pixels}
+	\nomenclature[A]{$(c_x, c_y)$}{Coordenadas do ponto principal da imagem}
+	\nomenclature[A]{$(u, v)$}{Coordenadas de pixel na imagem}
+	\nomenclature[A]{$\mathbf{p}_c$}{Ponto 3D expresso no referencial da câmera $[X_c\;Y_c\;Z_c]^\top$}
+	\nomenclature[A]{$(x_n, y_n)$}{Coordenadas normalizadas no plano de imagem}
+	\nomenclature[A]{$(x_d, y_d)$}{Coordenadas de imagem distorcidas}
+	\nomenclature[A]{$k_i, p_i$}{Coeficientes de distorção radial e tangencial}
+	\nomenclature[A]{$\mathbf{u}_i$}{Coordenadas de pixel observadas (medição)}
+	\nomenclature[A]{$\boldsymbol{\epsilon}_i$}{Ruído de medição associado à observação de cantos}
+	\nomenclature[A]{$\Sigma_u$}{Matriz de covariância do ruído de medição}
+	\nomenclature[B]{${}^{A}T_{B}$}{Matriz de transformação homogênea do referencial B para A}
+	\nomenclature[B]{$R$}{Matriz de rotação $SO(3)$}
+	\nomenclature[B]{$t$}{Vetor de translação $\mathbb{R}^3$}
+	\nomenclature[C]{$d_H(a,b)$}{Distância de Hamming entre dois códigos binários}
+	\nomenclature[C]{$H$}{Matriz de homografia planar}
 }
 
 %========================================================
