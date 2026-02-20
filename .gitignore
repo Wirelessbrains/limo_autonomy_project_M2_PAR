@@ -5,3 +5,12 @@ limo_ws/log/
 *.pyc
 .vscode/
 .idea/
+
+# Keep dataset folder structure only (no large files)
+limo_ws/dataset/**
+!limo_ws/dataset/.gitkeep
+!limo_ws/dataset/README.md
+
+# Optional safety filters for bag artifacts
+*.db3
+*.bag
