@@ -1,25 +1,26 @@
-apriltag_node:
+/**:
   ros__parameters:
-    # ---- Detecção ----
-    tag_family: 'tag36h11'
-    tag_size: 0.100             # <--- MEÇA E CONFIRME!
-    quad_decimate: 2.0          # 1.0 = mais preciso; 2.0 = mais rápido
-    quad_sigma: 0.0
-    nthreads: 4
+    # ---- Detection ----
+    image_transport: raw
+    family: "36h11"
+    size: 0.16
+    max_hamming: 1
 
-    # ---- Sincronização / transporte ----
-    sync_approximate: true
-    use_image_transport: true
+    detector:
+      threads: 4
+      decimate: 1.0
+      blur: 0.0
+      refine: true
+      sharpening: 0.8
+      debug: false
 
-    # ---- Frames ----
-    camera_frame: 'camera'
-    tag_frame_prefix: 'target_'
+    pose_estimation_method: pnp
 
-    # ---- Saídas (ESSENCIAL p/ distância) ----
-    publish_tag_detections: true
-    publish_tag_detections_pose: true
-    publish_tf: true
+    # ---- Tags (list) ----
+    #tag:
+      #ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      #frames: ["world_reference", "target_1", "target_2", "target_3", "target_4", "target_5", "target_6", "target_7", "target_8", "target_9", "target_10"]
+      #sizes: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1] 
 
-    # ---- Visual debug (opcional) ----
-    publish_detected_image: true
-
+    profile: false
+    use_sim_time: false

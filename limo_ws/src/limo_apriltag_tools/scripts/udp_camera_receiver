@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Wrapper for ROS 2 libexec.
+exec "$(dirname "$0")/../../bin/udp_camera_receiver_node" "$@"

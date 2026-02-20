@@ -1,0 +1,26 @@
+parking_spot_navigator:
+  ros__parameters:
+    pose_msg_type: pose_stamped
+    pose_topic: /tag_only_base_pose
+    goal_topic: /goal_pose
+    frame_id: map
+    target_spot_index: -1
+    reach_tolerance: 0.25
+    park_lock_distance: 0.5
+    publish_rate: 5.0
+
+    entry_point: [-3.0, 0.0]
+    lane_xs: [-2.0, 0.0, 2.0]
+    lane_y: 0.0
+
+    spot_targets: [
+      -2.0,  1.9, -1.5708,
+       0.0,  1.9, -1.5708,
+       2.0,  1.9, -1.5708,
+      -2.0, -1.9,  1.5708,
+       0.0, -1.9,  1.5708,
+       2.0, -1.9,  1.5708,
+      -2.0,  0.0,  0.0,
+       0.0,  0.0,  0.0,
+       2.0,  0.0,  0.0
+    ]

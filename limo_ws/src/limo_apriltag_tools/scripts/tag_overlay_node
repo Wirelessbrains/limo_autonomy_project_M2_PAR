@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Wrapper para o ros2 run (libexec). Chama o entry point Python oficial.
+exec "$(dirname "$0")/../../bin/tag_overlay_node" "$@"
