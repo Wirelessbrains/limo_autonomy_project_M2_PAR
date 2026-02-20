@@ -1,69 +1,87 @@
-# Record, Map, and Relocalize with AprilTags
+# LIMO Workspace Technical Guide
 
-![Project Avatar](https://www.generationrobots.com/19724-product_cover/robot-mobile-open-source-limo-compatible-ros1-et-ros2-limo-standard-version.jpg)
+This document is the **workspace-level operational guide**.
 
-**Primary track:** real LIMO robot pipeline (offline + online relocalization).  
-**Bonus track:** simulation workflow for validation.
-
-[![ROS 2 Humble](https://img.shields.io/badge/ROS%202-Humble-blue.svg)](https://docs.ros.org/en/humble/index.html)
-
----
-
-## Authors
-
-| Name | Role | Contact |
-|------|------|----------|
-| **MARTINS DO LAGO REIS João Pedro** | Real Robot Pipeline, Relocalization, Evaluation | joao_pedro.martins_do_lago_reis@etu.uca.fr |
-| **DA SILVA RAMOS Yann Kelvem** | Simulation, ROS Architecture, Integration | yann_kelvem.da_silva_ramos@etu.uca.fr |
+It explains:
+- what each part of `limo_ws` is used for,
+- how to run the workflows,
+- what outputs are generated,
+- how to interpret those outputs,
+- what the current limitations are,
+- what students should observe and deliver in practical sessions.
 
 ---
 
-## Project Tracks
+## 1) Workspace Purpose
 
-1. **Primary (Real Robot)**
-- Record trajectory data with AprilTag detections.
-- Build reference trajectory and tag map offline.
-- Run offline relocalization analysis.
-- Run online relocalization in RViz.
+`limo_ws` implements an AprilTag-based trajectory learning and relocalization workflow for a mobile robot.
 
-2. **Bonus (Simulation)**
-- Reproduce the same dataset flow in `walls_apriltag_limo.sdf`.
-- Record rosbag using joystick teleoperation.
-- Validate online relocalization before real-world runs.
+Main objective:
+- measure robot deviation from a learned trajectory using:
+  - nearest-point distance,
+  - heading error.
+
+The workspace supports:
+- **Offline processing** (from rosbag datasets),
+- **Online relocalization** (live topic-based estimation),
+- **Simulation validation** (bonus track).
 
 ---
 
-## Build
-
-### Real profile
+## 2) Folder Map
 
 ```bash
-cd /home/jpdark/Downloads/robot_ws
+limo_ws/
+├── dataset/                    # Recorded bags (not intended for large files in Git)
+├── outputs/                    # Generated artifacts (maps, trajectories, analysis)
+├── profiles/                   # Short build/run scripts
+├── scripts/
+│   ├── trajectory_analysis/    # Offline mapping + comparison
+│   └── manual_control/         # Utility scripts for teleop/control shaping
+├── src/
+│   ├── control_limo/           # Simulation parking + control example
+│   ├── gz_apriltag_env/        # Gazebo worlds and models
+│   ├── limo_apriltag_tools/    # Detection/localization/perception tools
+│   └── limo_online_relocalization/
+└── README.md
+```
+
+---
+
+## 3) Build and Environment
+
+From `limo_ws/`:
+
+```bash
+source /opt/ros/humble/setup.bash
+```
+
+Build real profile:
+
+```bash
 bash profiles/build_real.sh
 ```
 
-### Simulation profile
+Build simulation profile:
 
 ```bash
-cd /home/jpdark/Downloads/robot_ws
 bash profiles/build_sim.sh
 ```
 
 ---
 
-## Primary Workflow (Real Robot)
+## 4) Real Robot Workflow (Primary)
 
-### 1) Start perception/localization
+### 4.1 Run perception/localization stack
 
 ```bash
 bash profiles/launch_real_perception.sh
 ```
 
-### 2) Record a rosbag (new terminal)
+### 4.2 Record a dataset
 
 ```bash
-source /opt/ros/humble/setup.bash
-source /home/jpdark/Downloads/robot_ws/install/setup.bash
+source install/setup.bash
 ros2 bag record \
   /camera_info \
   /detections \
@@ -71,7 +89,7 @@ ros2 bag record \
   -o dataset/real_run_01
 ```
 
-### 3) Build map + trajectory offline
+### 4.3 Build offline reference artifacts
 
 ```bash
 python3 scripts/trajectory_analysis/build_tag_map_offline.py \
@@ -79,23 +97,7 @@ python3 scripts/trajectory_analysis/build_tag_map_offline.py \
   outputs/real_run_01_outputs
 ```
 
-Main outputs:
-- `outputs/real_run_01_outputs/trajetoria_camera.csv`
-- `outputs/real_run_01_outputs/mapa_tags.csv`
-- `outputs/real_run_01_outputs/tag_map.yaml`
-- `outputs/real_run_01_outputs/mapa_trajetoria_interativo.html`
-
-### 4) Offline relocalization analysis (optional)
-
-```bash
-python3 scripts/trajectory_analysis/analyze_distance_angle_to_trajectory.py \
-  outputs/real_run_01_outputs \
-  outputs/real_run_01_outputs \
-  outputs/real_run_01_compare \
-  --mode point --viz-mode debug
-```
-
-### 5) Online relocalization
+### 4.4 Run online relocalization
 
 ```bash
 bash profiles/launch_real_online_relocalization.sh \
@@ -103,37 +105,29 @@ bash profiles/launch_real_online_relocalization.sh \
   /tag_only_base_pose
 ```
 
-Online topics:
-- `/relocalization/reference_path`
-- `/relocalization/current_pose`
-- `/relocalization/nearest_pose`
-- `/relocalization/markers`
-- `/relocalization/distance_m`
-- `/relocalization/heading_error_deg`
-
 ---
 
-## Bonus Workflow (Simulation Dataset + Online Relocalization)
+## 5) Simulation Workflow (Bonus)
 
-### 1) Launch walls scenario
+### 5.1 Launch multi-tag scenario
 
 ```bash
 bash profiles/launch_sim_tags_dataset.sh
 ```
 
-### 2) Start joystick teleop (new terminal)
+### 5.2 Start joystick teleop
 
 ```bash
 bash profiles/launch_teleop_joy_sim.sh
 ```
 
-### 3) Record compact dataset (new terminal)
+### 5.3 Record compact dataset
 
 ```bash
 bash profiles/record_sim_dataset.sh walls_tags_run_01 minimal
 ```
 
-### 4) Build map + trajectory offline
+### 5.4 Build offline artifacts
 
 ```bash
 python3 scripts/trajectory_analysis/build_tag_map_offline.py \
@@ -141,25 +135,7 @@ python3 scripts/trajectory_analysis/build_tag_map_offline.py \
   outputs/walls_tags_run_01_outputs
 ```
 
-### 5) Optional frame transform (trajectory + YAML together)
-
-```bash
-python3 profiles/rotate_reference_frame.py \
-  --traj-in outputs/walls_tags_run_01_outputs/trajetoria_camera.csv \
-  --traj-out outputs/walls_tags_run_01_outputs/trajetoria_camera_xz.csv \
-  --map-in outputs/walls_tags_run_01_outputs/tag_map.yaml \
-  --map-out outputs/walls_tags_run_01_outputs/tag_map_walls_xz.yaml \
-  --yaw-deg 0 --tx 0 --ty 0 --tz 0
-```
-
-### 6) Relaunch simulation with selected map YAML
-
-```bash
-bash profiles/launch_sim_tags_online_detection.sh \
-  outputs/walls_tags_run_01_outputs/tag_map_walls_xz.yaml
-```
-
-### 7) Start online relocalization + RViz
+### 5.5 Run online relocalization + RViz
 
 ```bash
 bash profiles/launch_sim_online_relocalization.sh \
@@ -169,28 +145,143 @@ bash profiles/launch_sim_online_relocalization.sh \
 
 ---
 
-## Offline vs Online Relocalization
+## 6) What Outputs Are Generated
 
-- **Offline:** batch metrics and plots from recorded data.
-- **Online:** live nearest-point distance and heading error from current pose to reference trajectory.
+Typical offline outputs in `outputs/<run>_outputs/`:
 
-Both modes use `trajetoria_camera*.csv` as the reference trajectory source.
+- `trajetoria_camera.csv`
+  - reference trajectory samples.
+- `mapa_tags.csv`
+  - estimated tag poses.
+- `tag_map.yaml`
+  - map for localization nodes.
+- `diagnostico_erros.csv`
+  - diagnostic metrics from reconstruction.
+- `mapa_trajetoria_interativo.html`
+  - interactive map/trajectory view.
+
+Comparison outputs (from analysis script):
+
+- `distance_angle_metrics.csv`
+- `distance_angle_analysis.html`
+- `distance_angle_point_plot.pdf`
+- `distance_angle_point_plot.svg`
+- `point_pose_didactic.csv` (point mode)
+
+Online relocalization topics:
+
+- `/relocalization/reference_path`
+- `/relocalization/current_pose`
+- `/relocalization/nearest_pose`
+- `/relocalization/markers`
+- `/relocalization/distance_m`
+- `/relocalization/heading_error_deg`
 
 ---
 
-## Workspace Layout
+## 7) How to Interpret the Main Metrics
+
+- `distance_m`
+  - Euclidean distance between current robot pose and nearest reference trajectory point.
+  - Lower is better.
+
+- `heading_error_deg`
+  - Angular difference between robot heading and local trajectory heading.
+  - Closer to 0 deg is better.
+
+Interpretation guideline:
+- low distance + low heading error => good relocalization agreement,
+- low distance + high heading error => position close but orientation mismatch,
+- high distance => robot is far from learned path segment.
+
+---
+
+## 8) Control Law Example Included in Simulation
+
+The workspace includes an example control stack in `src/control_limo`:
+
+- `go_to_pose`: low-level pose controller (goal -> cmd_vel),
+- `parking_spot_navigator`: staged parking goal publication,
+- `tags_parking_full.launch.py`: complete simulation orchestration.
+
+This is provided as a practical control example linked to localization/perception.
+
+It is useful for:
+- observing closed-loop behavior in simulation,
+- understanding interaction between localization and command generation,
+- testing parameter sensitivity.
+
+---
+
+## 9) What Students Should Observe in Practical Work
+
+During runs, students should observe:
+
+1. Detection health
+- stable `/detections` stream,
+- camera info availability.
+
+2. Pose stream quality
+- continuity of `/tag_only_base_pose` (or configured pose topic),
+- absence of long gaps and severe jumps.
+
+3. Offline artifacts quality
+- coherent trajectory shape,
+- plausible tag map geometry.
+
+4. Online metrics behavior
+- nearest-point marker progression along path,
+- distance/heading error evolution while moving.
+
+Suggested practical deliverables:
+- one recorded run,
+- one offline output set,
+- one online relocalization screenshot/video,
+- short discussion of metric trends and limitations.
+
+---
+
+## 10) Current Limitations
+
+This workspace is not a full generic navigation stack.
+
+Known boundaries:
+- depends on AprilTag visibility and calibration quality,
+- not designed for dynamic obstacle avoidance,
+- not a global SLAM solution,
+- not intended for arbitrary unknown large-scale worlds,
+- performance degrades with poor detections or sparse tag visibility.
+
+---
+
+## 11) Troubleshooting Checklist
+
+If behavior is incorrect:
+
+1. Check topic availability:
 
 ```bash
-robot_ws/
-├── dataset/
-├── outputs/
-├── profiles/
-├── scripts/
-│   └── trajectory_analysis/
-├── src/
-│   ├── control_limo/
-│   ├── limo_apriltag_tools/
-│   ├── limo_online_relocalization/
-│   └── gz_apriltag_env/
-└── README.md
+ros2 topic list
 ```
+
+2. Confirm detections and pose are active:
+
+```bash
+ros2 topic echo /detections --once
+ros2 topic echo /tag_only_base_pose --once
+```
+
+3. Confirm reference CSV path exists before online relocalization.
+
+4. Ensure `frame_id`, `pose_topic`, and `pose_msg_type` are consistent with the current run.
+
+5. For large bags, prefer `minimal` recording mode to reduce processing time and size.
+
+---
+
+## 12) Additional Documents
+
+- `../docs/roadmap_2025_2026.md`
+- `../docs/project_scope_requirements.md`
+- `profiles/README.md`
+- `scripts/trajectory_analysis/README.md`
