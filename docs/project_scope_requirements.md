@@ -1,4 +1,4 @@
-# Project Scope and Requirements (Cahier des Charges Style)
+# Project Scope and Requirements 
 
 ## 1) Mission Statement
 Build a practical and reproducible system to:
@@ -8,7 +8,7 @@ Build a practical and reproducible system to:
 - relocalize a mobile robot with respect to the learned trajectory,
 - provide clear, measurable outputs for practical robotics evaluation.
 
-## 2) Client Requirement (Core)
+## 2) Client Requirement 
 Primary client requirement:
 - **trajectory deviation from a learned path** for a mobile robot (*"déviation de trajectoire apprise"*).
 
